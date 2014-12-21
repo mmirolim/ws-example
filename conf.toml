@@ -1,0 +1,9 @@
+# example configuration in toml for ws-fun
+
+[ds]
+	[ds.redis]
+	port = 6379
+	chan = "orders"
+
+[ws]
+port = 12345
