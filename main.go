@@ -27,10 +27,10 @@ func main() {
 			log.Println(v)
 		}
 	}()
-	// start handlers
-	http.HandleFunc("/hi", r.SayHi)
-	http.HandleFunc("/last", r.GetLastOrders)
-	err = http.ListenAndServe(":3000", nil)
+	// get routes
+	mux := r.Initialize()
+	// start routes
+	err = http.ListenAndServe(":3000", mux)
 	if err != nil {
 		log.Fatalln(err)
 	}

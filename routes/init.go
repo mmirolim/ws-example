@@ -6,10 +6,17 @@ import (
 	"net/http"
 )
 
-func SayHi(w http.ResponseWriter, req *http.Request) {
+func Initialize() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/hi", sayHi)
+	mux.HandleFunc("/last", getLastOrders)
+	return mux
+}
+
+func sayHi(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "Hi\n")
 }
 
-func GetLastOrders(w http.ResponseWriter, req *http.Request) {
+func getLastOrders(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Request: %+v\n", req)
 }
