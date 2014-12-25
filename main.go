@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/mmirolim/ws-fun/conf"
 	ds "github.com/mmirolim/ws-fun/datastore"
-	"github.com/mmirolim/ws-fun/ws"
+	r "github.com/mmirolim/ws-fun/routes"
 )
 
 func main() {
@@ -21,15 +22,17 @@ func main() {
 	msg := make(chan []byte)
 	// start subscription listening
 	go ds.Subscribe(AppConf.DS.Redis.Chan, msg)
-	// start ws server
-	err = ws.StartServer(AppConf.WS.Port)
-	fatalOnError(err)
-	for {
-		select {
-		case v := <-msg:
-			// read from channel
-			log.Printf("%v", string(v))
+	go func() {
+		for v := range msg {
+			log.Println(v)
 		}
+	}()
+	// start handlers
+	http.HandleFunc("/hi", r.SayHi)
+	http.HandleFunc("/last", r.GetLastOrders)
+	err = http.ListenAndServe(":3000", nil)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
 }

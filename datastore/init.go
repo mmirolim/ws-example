@@ -17,6 +17,7 @@ func Subscribe(channel string, msg chan<- []byte) {
 	c := redisPool.Get()
 	p := redis.PubSubConn{c}
 	p.Subscribe(channel)
+loop:
 	for {
 		switch v := p.Receive().(type) {
 		case redis.Message:
@@ -25,6 +26,10 @@ func Subscribe(channel string, msg chan<- []byte) {
 			log.Printf("%s: %s %d\n", v.Channel, v.Kind, v.Count)
 		case error:
 			log.Printf("%v\n", v)
+			// break subscribe loop
+			// @TODO refactor func
+			break loop
 		}
 	}
+	close(msg)
 }
