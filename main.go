@@ -17,6 +17,8 @@ func main() {
 	// read conf file
 	AppConf, err := conf.Read(f)
 	fatalOnError(err)
+	// close conf file
+	f.Close()
 	// init datastore
 	ds.Initialize(AppConf.DS.Redis.Port)
 	msg := make(chan []byte)
